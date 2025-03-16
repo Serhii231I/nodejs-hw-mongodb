@@ -1,9 +1,11 @@
 import 'dotenv/config';
-import mongoose from "mongoose";
-const DB_URI = process.env.DB_URI;
+import mongoose from 'mongoose';
+import { getEnvVar } from '../utils/getEnvVar.js';
+
+const DB_URI = getEnvVar('DB_URI');
 
 const initMongoConnection = () => {
-  console.log("Mongo connection successfully established!");
+  console.log('Mongo connection successfully established!');
   return mongoose.connect(DB_URI);
 };
 
