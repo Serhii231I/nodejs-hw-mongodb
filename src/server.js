@@ -1,7 +1,10 @@
 import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
-import { getAllContacts, getContactById } from './services/contactsWorkService.js';
+import {
+  getAllContacts,
+  getContactById,
+} from './services/contactsWorkService.js';
 
 const PORT = process.env.PORT || 3000;
 
@@ -21,7 +24,8 @@ export async function setupServer() {
     app.get('/contacts', async (req, res) => {
       const contacts = await getAllContacts();
       res.status(200).json({
-        message: "Successfully found contacts!",
+        status: 200,
+        message: 'Successfully found contacts!',
         data: contacts,
       });
     });
@@ -29,21 +33,21 @@ export async function setupServer() {
     app.get('/contacts/:id', async (req, res) => {
       const { id } = req.params;
       const contact = await getContactById(id);
-      if (contact=== null) {
-        return res.status(404).send("Contact not found!");
+      if (contact === null) {
+        return res.status(404).send('Contact not found!');
       }
-      
+
       res.status(200).json({
         message: `Successfully found contact with id ${id}!`,
-        data: { contact },
+        data: contact,
       });
     });
 
     app.use('*', (req, res, next) => {
       res.status(404).json({
-        message: 'Not found', 
+        message: 'Not found',
       });
-    }); 
+    });
 
     app.use((err, req, res, next) => {
       res.status(500).json({
@@ -55,9 +59,7 @@ export async function setupServer() {
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
-  } 
-
-};
+  }
+}
