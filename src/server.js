@@ -38,6 +38,7 @@ export async function setupServer() {
       }
 
       res.status(200).json({
+        status: 200,
         message: `Successfully found contact with id ${id}!`,
         data: contact,
       });
@@ -45,12 +46,14 @@ export async function setupServer() {
 
     app.use('*', (req, res, next) => {
       res.status(404).json({
+        status: 404,
         message: 'Not found',
       });
     });
 
     app.use((err, req, res, next) => {
       res.status(500).json({
+        status: 500,
         message: 'Something went wrong',
         error: err.message,
       });
