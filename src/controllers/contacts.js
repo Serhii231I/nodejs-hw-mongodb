@@ -20,6 +20,7 @@ export async function getContactsController(req, res) {
     perPage,
     sortBy,
     sortOrder,
+    userId: req.user.id,
   });
   res.status(200).json({
     status: 200,
@@ -33,6 +34,10 @@ export async function getContactController(req, res) {
   if (contact === null) {
     throw new createHttpError.NotFound('Contact not found');
   }
+
+  if (contact.userId.toString() !== req.user.id.toString()) {
+    throw new createHttpError.Forbidden('Contact is not allowed');
+  }
   res.status(200).json({
     status: 200,
     message: `Successfully found contact with id ${id}!`,
@@ -42,15 +47,21 @@ export async function getContactController(req, res) {
 
 export async function deleteContactController(req, res) {
   const { id } = req.params;
-  const result = await deleteContact(id);
-  if (result === null) {
+  const contact = await deleteContact(id);
+  if (contact === null) {
     throw new createHttpError.NotFound('Contact not found');
+  }
+  if (contact.userId.toString() !== req.user.id.toString()) {
+    throw new createHttpError.Forbidden('Contact is not allowed');
   }
   res.status(204).send();
 }
 
 export async function createContactController(req, res) {
-  const contact = req.body;
+  const contact = {
+    ...req.body,
+    userId: req.user.id,
+  };
   const result = await createContact(contact);
   res.status(201).json({
     status: 201,
@@ -63,6 +74,10 @@ export async function replaceContactController(req, res) {
   const { id } = req.params;
   const contact = req.body;
   const result = await replaceContact(id, contact);
+
+  if (contact.userId.toString() !== req.user.id.toString()) {
+    throw new createHttpError.Forbidden('Contact is not allowed');
+  }
 
   if (result.updetedExisting === true) {
     return res.json({
@@ -84,6 +99,10 @@ export async function updateContactController(req, res) {
   const result = await updateContact(id, contact);
   if (result === null) {
     throw new createHttpError.NotFound('Contact not found');
+  }
+
+  if (contact.userId.toString() !== req.user.id.toString()) {
+    throw new createHttpError.Forbidden('Contact is not allowed');
   }
   res.json({
     status: 200,
