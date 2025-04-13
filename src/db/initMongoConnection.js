@@ -1,5 +1,8 @@
 import 'dotenv/config';
 import mongoose from 'mongoose';
+import { getEnvVar } from '../utils/getEnvVar.js';
+
+const DB_URI = getEnvVar('DB_URI');
 const user = process.env.MONGODB_USER;
 const password = process.env.MONGODB_PASSWORD;
 const url = process.env.MONGODB_URL;
