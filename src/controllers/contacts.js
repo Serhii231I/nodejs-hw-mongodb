@@ -97,11 +97,12 @@ export async function updateContactController(req, res) {
   const { id } = req.params;
   const contact = req.body;
   const result = await updateContact(id, contact);
+
   if (result === null) {
     throw new createHttpError.NotFound('Contact not found');
   }
 
-  if (contact.userId.toString() !== req.user.id.toString()) {
+  if (result.userId.toString() !== req.user.id.toString()) {
     throw new createHttpError.Forbidden('Contact is not allowed');
   }
   res.json({
