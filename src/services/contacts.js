@@ -29,20 +29,20 @@ export async function getContacts({
   };
 }
 
-export function getContact(contactId) {
-  return Contact.findById(contactId);
+export function getContact(contactId, userId) {
+  return Contact.findOne(contactId, userId);
 }
 
-export function deleteContact(contactId) {
-  return Contact.findByIdAndDelete(contactId);
+export function deleteContact(contactId, userId) {
+  return Contact.findOneAndDelete(contactId, userId);
 }
 
 export function createContact(contact) {
   return Contact.create(contact);
 }
 
-export async function replaceContact(contactId, contact) {
-  const result = await Contact.findByIdAndUpdate(contactId, contact, {
+export async function replaceContact(contactId, userId, contact) {
+  const result = await Contact.findOneAndUpdate(contactId, userId, contact, {
     new: true,
     upsert: true,
     includeResultMetadata: true,
@@ -54,6 +54,6 @@ export async function replaceContact(contactId, contact) {
   };
 }
 
-export async function updateContact(contactId, contact) {
-  return Contact.findByIdAndUpdate(contactId, contact, { new: true });
+export async function updateContact(contactId, userId, contact) {
+  return Contact.findOneAndUpdate(contactId, userId, contact, { new: true });
 }
