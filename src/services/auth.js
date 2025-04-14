@@ -1,9 +1,13 @@
 import crypto from 'node:crypto';
 import bcrypt from 'bcrypt';
 import createHttpError from 'http-errors';
+import jwt from 'jsonwebtoken';
 
-import User from '../models/user.js';
-import Session from '../models/session.js';
+import { User } from '../models/user.js';
+import { Session } from '../models/session.js';
+
+import { sendEmail } from '../utils/sendEmail.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
 
 export async function registerUser(payload) {
   const user = await User.findOne({ email: payload.email });
@@ -69,4 +73,44 @@ export async function refreshSession(sessionId, refreshToken) {
     accessTokenValidUntil: new Date(Date.now() + 15 * 60 * 1000),
     refreshTokenValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
   });
+}
+
+export async function requestPasswordReset(email) {
+  const user = await User.findOne({ email });
+
+  if (user === null) {
+    throw createHttpError.NotFound('User not found');
+  }
+
+  const resetToken = jwt.sign(
+    { sub: user._id, name: user.name },
+    getEnvVar('JWT_SECRET'),
+    {
+      expiresIn: '5m',
+    },
+  );
+
+  await sendEmail(
+    email,
+    'Reset password',
+    `<h1>Click <a href= "${getEnvVar('APP_DOMAIN')}reset-password?token=${resetToken}">here</a> to reset your password.</h1>`,
+  );
+}
+
+export async function resetPassword(token, newPassword) {
+  try {
+    const decoded = jwt.verify(token, getEnvVar('JWT_SECRET'));
+
+    const user = await User.findById(decoded.sub);
+
+    if (user === null) {
+      throw createHttpError.NotFound('User not found');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await User.findByIdAndUpdate(user._id, { password: hashedPassword });
+  } catch (error) {
+    throw error;
+  }
 }
