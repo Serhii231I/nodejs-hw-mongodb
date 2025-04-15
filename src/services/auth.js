@@ -4,7 +4,6 @@ import createHttpError from 'http-errors';
 
 import User from '../models/user.js';
 import Session from '../models/session.js';
-import { log } from 'node:console';
 
 export async function registerUser(payload) {
   const user = await User.findOne({ email: payload.email });
