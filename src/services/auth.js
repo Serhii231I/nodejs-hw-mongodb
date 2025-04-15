@@ -1,9 +1,25 @@
+import * as fs from 'node:fs';
+import path from 'node:path';
 import crypto from 'node:crypto';
+
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import handlebars from 'handlebars';
+
 import createHttpError from 'http-errors';
 
-import User from '../models/user.js';
-import Session from '../models/session.js';
+import { User } from '../models/user.js';
+import { Session } from '../models/session.js';
+
+import { sendEmail } from '../utils/sendEmail.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
+
+const RESET_PASSWORD_TEMPLATES = fs.readFileSync(
+  path.resolve('src/temlates/reset-password.hbs'),
+  {
+    encoding: 'utf-8',
+  },
+);
 
 export async function registerUser(payload) {
   const user = await User.findOne({ email: payload.email });
@@ -49,8 +65,6 @@ export async function refreshSession(sessionId, refreshToken) {
     refreshToken,
   });
 
-  console.log(currentSession);
-
   if (currentSession === null) {
     throw createHttpError.Unauthorized('Session not found');
   }
@@ -71,4 +85,46 @@ export async function refreshSession(sessionId, refreshToken) {
     accessTokenValidUntil: new Date(Date.now() + 15 * 60 * 1000),
     refreshTokenValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
   });
+}
+
+export async function requestPasswordReset(email) {
+  const user = await User.findOne({ email });
+
+  if (user === null) {
+    throw createHttpError.NotFound('User not found');
+  }
+
+  const resetToken = jwt.sign(
+    { sub: user._id, name: user.name },
+    getEnvVar('JWT_SECRET'),
+    {
+      expiresIn: '5m',
+    },
+  );
+  const teplate = handlebars.compile(RESET_PASSWORD_TEMPLATES);
+
+  await sendEmail(email, 'Reset password', teplate({ resetToken }));
+}
+
+export async function resetPassword(token, newPassword) {
+  try {
+    const decoded = jwt.verify(token, getEnvVar('JWT_SECRET'));
+
+    const user = await User.findById(decoded.sub);
+
+    if (user === null) {
+      throw createHttpError.NotFound('User not found');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await User.findByIdAndUpdate(user._id, { password: hashedPassword });
+  } catch (error) {
+    if (
+      error.name === 'JsonWebTokenError' ||
+      error.name === 'TokenExpiredError'
+    ) {
+      throw createHttpError.Unauthorized('Token is expired or invalid.');
+    }
+  }
 }
