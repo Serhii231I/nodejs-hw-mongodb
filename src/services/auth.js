@@ -1,13 +1,25 @@
+import * as fs from 'node:fs';
+import path from 'node:path';
 import crypto from 'node:crypto';
+
 import bcrypt from 'bcrypt';
-import createHttpError from 'http-errors';
 import jwt from 'jsonwebtoken';
+import handlebars from 'handlebars';
+
+import createHttpError from 'http-errors';
 
 import { User } from '../models/user.js';
 import { Session } from '../models/session.js';
 
 import { sendEmail } from '../utils/sendEmail.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
+
+const RESET_PASSWORD_TEMPLATES = fs.readFileSync(
+  path.resolve('src/temlates/reset-password.hbs'),
+  {
+    encoding: 'utf-8',
+  },
+);
 
 export async function registerUser(payload) {
   const user = await User.findOne({ email: payload.email });
@@ -89,12 +101,9 @@ export async function requestPasswordReset(email) {
       expiresIn: '5m',
     },
   );
+  const teplate = handlebars.compile(RESET_PASSWORD_TEMPLATES);
 
-  await sendEmail(
-    email,
-    'Reset password',
-    `<h1>Click <a href= "${getEnvVar('APP_DOMAIN')}reset-password?token=${resetToken}">here</a> to reset your password.</h1>`,
-  );
+  await sendEmail(email, 'Reset password', teplate({ resetToken }));
 }
 
 export async function resetPassword(token, newPassword) {
@@ -111,6 +120,11 @@ export async function resetPassword(token, newPassword) {
 
     await User.findByIdAndUpdate(user._id, { password: hashedPassword });
   } catch (error) {
-    throw error;
+    if (
+      error.name === 'JsonWebTokenError' ||
+      error.name === 'TokenExpiredError'
+    ) {
+      throw createHttpError.Unauthorized('Token is expired or invalid.');
+    }
   }
 }
