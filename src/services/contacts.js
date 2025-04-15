@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Contact from '../models/contacts.js';
 
 export async function getContacts({
@@ -30,11 +31,17 @@ export async function getContacts({
 }
 
 export function getContact(contactId, userId) {
-  return Contact.findOne(contactId, userId);
+  return Contact.findOne({
+    _id: contactId,
+    userId,
+  });
 }
 
 export function deleteContact(contactId, userId) {
-  return Contact.findOneAndDelete(contactId, userId);
+  return Contact.findOneAndDelete({
+    _id: contactId,
+    userId,
+  });
 }
 
 export function createContact(contact) {
@@ -42,11 +49,18 @@ export function createContact(contact) {
 }
 
 export async function replaceContact(contactId, userId, contact) {
-  const result = await Contact.findOneAndUpdate(contactId, userId, contact, {
-    new: true,
-    upsert: true,
-    includeResultMetadata: true,
-  });
+  const result = await Contact.findOneAndUpdate(
+    {
+      _id: contactId,
+      userId,
+    },
+    contact,
+    {
+      new: true,
+      upsert: true,
+      includeResultMetadata: true,
+    },
+  );
 
   return {
     value: result.value,
@@ -55,5 +69,12 @@ export async function replaceContact(contactId, userId, contact) {
 }
 
 export async function updateContact(contactId, userId, contact) {
-  return Contact.findOneAndUpdate(contactId, userId, contact, { new: true });
+  return Contact.findOneAndUpdate(
+    {
+      _id: contactId,
+      userId,
+    },
+    contact,
+    { new: true },
+  );
 }
