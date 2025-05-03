@@ -27,7 +27,7 @@ router.delete('/:id', isValidId, ctrlWrapper(deleteContactController));
 
 router.post(
   '/',
-  upload.single('img'),
+  upload.single('photo'),
   jsonParser,
   validateBody(contactSchema),
   ctrlWrapper(createContactController),
@@ -44,7 +44,7 @@ router.put(
 router.patch(
   '/:id',
   isValidId,
-  upload.single('img'),
+  upload.single('photo'),
   jsonParser,
   validateBody(updateContactSchema),
   ctrlWrapper(updateContactController),
