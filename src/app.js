@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import routes from './routes/index.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import { swaggerDocs } from './middlewares/swaggerDocs.js';
 
 const app = express();
 app.use('/uploads', express.static(path.resolve('src', 'uploads')));
@@ -20,6 +21,7 @@ app.use(
     },
   }),
 );
+app.use('/api-docs', swaggerDocs());
 
 app.use(errorHandler);
 
