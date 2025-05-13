@@ -9,10 +9,7 @@ info:
 tags:
   - name: Contacts
     description: Operations about contacts.
-  - name: Auth
-    description: Auth operations.
 servers:
-  - url: http://localhost:3000
   - url: https://contacts-app-6yt3.onrender.com
 paths:
   /contacts:
