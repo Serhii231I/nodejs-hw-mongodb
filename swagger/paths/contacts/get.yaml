@@ -32,6 +32,7 @@ parameters:
     name: isFavourite
     schema:
       type: boolean
+      enum: [true, false]
       example: true
       default: false
     description: 'Whether the contact is in favourites'
@@ -41,6 +42,7 @@ parameters:
       type: string
       enum: ['work', 'home', 'personal']
       example: 'personal'
+      default: 'home'
     description: 'Type of contact'
   - in: query
     name: sortBy
