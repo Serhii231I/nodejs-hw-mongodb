@@ -40,7 +40,7 @@ parameters:
     schema:
       type: string
       enum: ['work', 'home', 'personal']
-      example: personal
+      example: 'personal'
     description: 'Type of contact'
   - in: query
     name: sortBy
