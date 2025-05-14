@@ -74,6 +74,10 @@
             "name": "isFavourite",
             "schema": {
               "type": "boolean",
+              "enum": [
+                true,
+                false
+              ],
               "example": true,
               "default": false
             },
@@ -89,7 +93,8 @@
                 "home",
                 "personal"
               ],
-              "example": "personal"
+              "example": "personal",
+              "default": "home"
             },
             "description": "Type of contact"
           },
@@ -236,7 +241,8 @@
                       "work",
                       "home",
                       "personal"
-                    ]
+                    ],
+                    "example": "work"
                   },
                   "photo": {
                     "description": "Link to contact's photo",
