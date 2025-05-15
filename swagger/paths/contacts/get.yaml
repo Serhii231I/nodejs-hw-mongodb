@@ -25,16 +25,7 @@ parameters:
     schema:
       type: string
       enum:
-        [
-          '_id',
-          'name',
-          'phoneNumber',
-          'email',
-          'isFavourite',
-          'contactType',
-          'createdAt',
-          'updatedAt',
-        ]
+        ['_id', 'name', 'phoneNumber', 'email', 'isFavourite', 'contactType']
       example: 'name'
     description: 'Sort contacts by name'
   - in: query
@@ -54,7 +45,7 @@ parameters:
       default: false
     description: 'Whether the contact is in favourites'
   - in: query
-    name: type
+    name: contactType
     schema:
       type: string
       enum: ['work', 'home', 'personal']
