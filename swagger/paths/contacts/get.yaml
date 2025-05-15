@@ -21,6 +21,14 @@ parameters:
       default: 10
     description: 'Number of contacts per page'
   - in: query
+    name: sortBy
+    schema:
+      type: string
+      enum:
+        ['_id', 'name', 'phoneNumber', 'email', 'isFavourite', 'contactType']
+      example: 'name'
+    description: 'Sort contacts by name'
+  - in: query
     name: sortOrder
     schema:
       type: string
