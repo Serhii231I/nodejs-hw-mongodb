@@ -624,16 +624,14 @@
           "isFavourite": {
             "description": "Whether is contact in favourites",
             "type": "boolean",
-            "example": true
+            "example": true,
+            "default": false
           },
           "contactType": {
             "description": "Type of contact",
             "type": "string",
-            "example": [
-              "work",
-              "home",
-              "personal"
-            ]
+            "example": "personal",
+            "default": "personal"
           },
           "photo": {
             "description": "Contact`s photo url",
