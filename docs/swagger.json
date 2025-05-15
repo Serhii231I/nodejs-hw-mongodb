@@ -18,10 +18,6 @@
     {
       "name": "Contacts",
       "description": "Operations about contacts."
-    },
-    {
-      "name": "Auth",
-      "description": "Auth operations."
     }
   ],
   "paths": {
@@ -78,6 +74,10 @@
             "name": "isFavourite",
             "schema": {
               "type": "boolean",
+              "enum": [
+                true,
+                false
+              ],
               "example": true,
               "default": false
             },
@@ -93,7 +93,8 @@
                 "home",
                 "personal"
               ],
-              "example": "personal"
+              "example": "personal",
+              "default": "home"
             },
             "description": "Type of contact"
           },
@@ -240,7 +241,8 @@
                       "work",
                       "home",
                       "personal"
-                    ]
+                    ],
+                    "example": "work"
                   },
                   "photo": {
                     "description": "Link to contact's photo",
@@ -622,16 +624,14 @@
           "isFavourite": {
             "description": "Whether is contact in favourites",
             "type": "boolean",
-            "example": true
+            "example": true,
+            "default": false
           },
           "contactType": {
             "description": "Type of contact",
             "type": "string",
-            "example": [
-              "work",
-              "home",
-              "personal"
-            ]
+            "example": "personal",
+            "default": "personal"
           },
           "photo": {
             "description": "Contact`s photo url",
