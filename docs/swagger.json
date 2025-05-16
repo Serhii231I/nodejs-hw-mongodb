@@ -57,6 +57,21 @@
           },
           {
             "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "_id",
+                "name",
+                "phoneNumber",
+                "email"
+              ],
+              "example": "name"
+            },
+            "description": "Sort contacts by name"
+          },
+          {
+            "in": "query",
             "name": "sortOrder",
             "schema": {
               "type": "string",
@@ -68,49 +83,6 @@
               "default": "asc"
             },
             "description": "Sort order"
-          },
-          {
-            "in": "query",
-            "name": "isFavourite",
-            "schema": {
-              "type": "boolean",
-              "enum": [
-                true,
-                false
-              ],
-              "example": true,
-              "default": false
-            },
-            "description": "Whether the contact is in favourites"
-          },
-          {
-            "in": "query",
-            "name": "type",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "work",
-                "home",
-                "personal"
-              ],
-              "example": "personal",
-              "default": "home"
-            },
-            "description": "Type of contact"
-          },
-          {
-            "in": "query",
-            "name": "sortBy",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "name",
-                "createdAt",
-                "updatedAt"
-              ],
-              "example": "name"
-            },
-            "description": "Field by which to sort contacts"
           }
         ],
         "responses": {
